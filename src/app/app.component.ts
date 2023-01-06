@@ -25,6 +25,5 @@ export class AppComponent {
 
   logOut(): void {
     this.authService.logout();
-    console.log('Log out');
   }
 }
