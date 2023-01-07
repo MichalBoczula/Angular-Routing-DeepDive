@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { MessageService } from '../../messages/message.service';
 
@@ -9,14 +10,16 @@ import { ProductService } from '../product.service';
   templateUrl: './product-edit.component.html',
   styleUrls: ['./product-edit.component.css']
 })
-export class ProductEditComponent {
+export class ProductEditComponent implements OnInit {
   pageTitle = 'Product Edit';
   errorMessage = '';
 
   product: Product | null = null;
 
   constructor(private productService: ProductService,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private route: ActivatedRoute,
+    private router: Router) { }
 
   getProduct(id: number): void {
     this.productService.getProduct(id).subscribe({
@@ -40,17 +43,18 @@ export class ProductEditComponent {
   }
 
   deleteProduct(): void {
-      if (!this.product || !this.product.id) {
-        // Don't delete, it was never saved.
-        this.onSaveComplete(`${this.product?.productName} was deleted`);
-      } else {
-        if (confirm(`Really delete the product: ${this.product.productName}?`)) {
-          this.productService.deleteProduct(this.product.id).subscribe({
-            next: () => this.onSaveComplete(`${this.product?.productName} was deleted`),
-            error: err => this.errorMessage = err
-          });
-        }
+    if (!this.product || !this.product.id) {
+      // Don't delete, it was never saved.
+      this.onSaveComplete(`${this.product?.productName} was deleted`);
+    } else {
+      if (confirm(`Really delete the product: ${this.product.productName}?`)) {
+        this.productService.deleteProduct(this.product.id).subscribe({
+          next: () => this.onSaveComplete(`${this.product?.productName} was deleted`),
+          error: err => this.errorMessage = err
+        });
       }
+    }
+    this.router.navigate(['/products']);
   }
 
   saveProduct(): void {
@@ -69,13 +73,26 @@ export class ProductEditComponent {
     } else {
       this.errorMessage = 'Please correct the validation errors.';
     }
+    this.router.navigate(['/products']);
   }
 
   onSaveComplete(message?: string): void {
     if (message) {
       this.messageService.addMessage(message);
+      this.router.navigate(['/products'])
     }
-
-    // Navigate back to the product list
   }
+
+  onCancel(): void {
+    this.router.navigate(['/products']);
+  }
+
+
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      const id = Number(params.get('id'));
+      this.getProduct(id);
+    })
+  }
+
 }
