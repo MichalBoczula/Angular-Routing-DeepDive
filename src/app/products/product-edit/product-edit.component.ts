@@ -13,8 +13,8 @@ import { ProductService } from '../product.service';
 export class ProductEditComponent implements OnInit {
   pageTitle = 'Product Edit';
   errorMessage = '';
-
   product: Product | null = null;
+  private dataIsValid: { [key: string]: boolean } = {}
 
   constructor(private productService: ProductService,
     private messageService: MessageService,
@@ -98,6 +98,37 @@ export class ProductEditComponent implements OnInit {
 
       this.onProductRetrieved(resolvedData.product)
     })
+  }
+
+  isValid(path? : string): boolean {
+    this.validate();
+    if(path)
+    {
+      return this.dataIsValid[path];
+    }
+    return(this.dataIsValid &&
+       Object.keys(this.dataIsValid)
+       .every(ele => this.dataIsValid[ele] === true))
+  }
+
+  validate(): void {
+    this.dataIsValid = {}
+    if (this.product?.productName &&
+      this.product.productName.length >= 3 &&
+      this.product.productCode) {
+      this.dataIsValid['info'] = true;
+    }
+    else {
+      this.dataIsValid['info'] = false;
+    }
+
+    if (this.product?.category &&
+      this.product.category.length >= 3) {
+      this.dataIsValid['info'] = true;
+    }
+    else {
+      this.dataIsValid['info'] = false;
+    }
   }
 
 }
