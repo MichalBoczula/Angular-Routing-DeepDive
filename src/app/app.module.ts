@@ -11,7 +11,6 @@ import { AppComponent } from './app.component';
 
 
 /* Feature Modules */
-import { ProductModule } from './products/product.module';
 import { UserModule } from './user/user.module';
 import { MessageModule } from './messages/message.module';
 import { WelcomeComponent } from './home/welcome.component';
@@ -24,7 +23,6 @@ import { AppRoutingModule } from './app-routes.module';
     BrowserAnimationsModule,
     HttpClientModule,
     InMemoryWebApiModule.forRoot(ProductData, { delay: 1000 }),
-    ProductModule,
     UserModule,
     MessageModule,
     AppRoutingModule
